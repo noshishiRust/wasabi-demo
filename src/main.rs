@@ -2,6 +2,7 @@
 #![no_main]
 #![feature(offset_of)]
 
+use core::arch::asm;
 use core::mem::{offset_of, size_of};
 use core::panic::PanicInfo;
 use core::slice;
@@ -84,7 +85,7 @@ fn locate_graphic_protcol<'a>(
 ) -> Result<&'a EfiGraphicsOutputProtocol<'a>> {
     let mut graphics_output_protocol: *mut EfiGraphicsOutputProtocol = core::ptr::null_mut();
     let status = (efi_system_table.boot_services.locate_protocol)(
-        &EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID as *const _ as *const EfiGuid,
+        &EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID as *const _,
         core::ptr::null(),
         &mut graphics_output_protocol as *mut _ as *mut *mut EfiVoid,
     );
@@ -92,6 +93,12 @@ fn locate_graphic_protcol<'a>(
         return Err("Failed to locate Graphics Output Protocol");
     }
     Ok(unsafe { &*graphics_output_protocol })
+}
+
+pub fn hlt() {
+    unsafe {
+        asm!("hlt",);
+    }
 }
 
 #[no_mangle]
@@ -105,10 +112,14 @@ fn efi_main(_image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
         *e = 0xffffff;
     }
 
-    loop {}
+    loop {
+        hlt();
+    }
 }
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
-    loop {}
+    loop {
+        hlt();
+    }
 }
