@@ -1,5 +1,3 @@
-
-
 target を指定して build する。
 
 ```bash
@@ -21,5 +19,5 @@ qemu-system-x86_64 -bios RELEASEX64_OVMF.fd
 マウントドライブを指定して起動する。
 
 ```bash
-emu-system-x86_64 -bios third_party/ovmf/RELEASEX64_OVMF.fd -drive format=raw,file=fat:rw:mnt
+qemu-system-x86_64 -bios third_party/ovmf/RELEASEX64_OVMF.fd -drive format=raw,file=fat:rw:mnt
 ```
