@@ -6,6 +6,9 @@ use wasabi_demo::efi::vram::init_vram;
 use wasabi_demo::efi::{EfiHandle, EfiSystemTable};
 use wasabi_demo::{hlt, Result};
 
+/// UEFI entry point
+/// 
+/// Reference: <https://uefi.org/specs/UEFI/2.11/04_EFI_System_Table.html#uefi-image-entry-point>
 #[no_mangle]
 fn efi_main(_image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
     let mut vram = init_vram(efi_system_table).expect("Failed to initialize VRAM");

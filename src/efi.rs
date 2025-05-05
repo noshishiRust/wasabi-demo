@@ -7,6 +7,9 @@ use core::mem::{offset_of, size_of};
 pub type EfiVoid = u8;
 pub type EfiHandle = u64;
 
+/// EFI System Table
+/// 
+/// Reference: <https://uefi.org/specs/UEFI/2.11/04_EFI_System_Table.html#id6>
 #[repr(C)]
 pub struct EfiSystemTable {
     _reserved0: [u64; 12],
@@ -14,6 +17,9 @@ pub struct EfiSystemTable {
 }
 const _: () = assert!(offset_of!(EfiSystemTable, boot_services) == 96); // 12 * 8 (u64) = 96
 
+/// EFI Boot Services Table
+/// 
+/// Reference: <https://uefi.org/specs/UEFI/2.11/04_EFI_System_Table.html#efi-boot-services-table>
 #[repr(C)]
 pub struct EfiBootServicesTable {
     _reserved0: [u64; 40],
@@ -25,6 +31,7 @@ pub struct EfiBootServicesTable {
 }
 const _: () = assert!(offset_of!(EfiBootServicesTable, locate_protocol) == 320); // 40 * 8 (u64) = 320
 
+/// Reference: <https://uefi.org/specs/UEFI/2.11/Apx_A_GUID_and_Time_Formats.html#guid-and-time-formats>
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct EfiGuid {
@@ -34,6 +41,7 @@ pub struct EfiGuid {
     pub data3: [u8; 8],
 }
 
+/// Reference: <https://uefi.org/specs/UEFI/2.11/12_Protocols_Console_Support.html#efi-graphics-output-protocol>
 const EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID: EfiGuid = EfiGuid {
     data0: 0x9042a9de,
     data1: 0x23dc,
@@ -41,6 +49,7 @@ const EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID: EfiGuid = EfiGuid {
     data3: [0x96, 0xfb, 0x7a, 0xde, 0xd0, 0x80, 0x51, 0x6a],
 };
 
+/// Reference: <https://uefi.org/specs/UEFI/2.11/Apx_D_Status_Codes.html#status-codes>
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[repr(u64)]
 pub enum EfiStatus {
