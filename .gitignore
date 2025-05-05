@@ -1,0 +1,7 @@
+# binary files
+/target
+/third_party
+/mnt
+
+# mac OS
+.DS_Store
