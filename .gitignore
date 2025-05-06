@@ -3,5 +3,8 @@
 /third_party
 /mnt
 
+# log file
+/log
+
 # mac OS
 .DS_Store

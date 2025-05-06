@@ -7,7 +7,7 @@ use wasabi_demo::efi::memory::{EfiMemoryType, MemoryMapHolder};
 use wasabi_demo::efi::table::{exit_from_efi_boot_services, EfiSystemTable};
 use wasabi_demo::efi::vram::{draw_test_pattern, fill_rect, init_vram, Color, VramTextWriter};
 use wasabi_demo::efi::EfiHandle;
-use wasabi_demo::hlt;
+use wasabi_demo::x86::hlt;
 
 /// UEFI entry point
 ///
