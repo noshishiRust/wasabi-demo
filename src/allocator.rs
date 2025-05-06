@@ -44,7 +44,6 @@ impl Header {
         self as *const Header as usize + self.size
     }
 
-    /// create a new header from a given memory address
     unsafe fn new_from_addr(addr: usize) -> Box<Header> {
         let header = addr as *mut Header; // raw pointer
         header.write(Header {
@@ -61,7 +60,6 @@ impl Header {
         Box::from_raw(header)
     }
 
-    ///
     fn provide(&mut self, size: usize, align: usize) -> Option<*mut u8> {
         let size = max(round_up_to_nearest_pow2(size).ok()?, HEADER_SIZE);
         let align = max(align, HEADER_SIZE);
@@ -72,7 +70,7 @@ impl Header {
             let mut size_used = 0;
             let allocated_addr = (self.end_addr() - size) & !(align - 1);
             let mut header_for_allocated =
-                unsafe { Self::new_from_addr(allocated_addr + HEADER_SIZE) };
+                unsafe { Self::new_from_addr(allocated_addr - HEADER_SIZE) };
             header_for_allocated.is_allocated = true;
             header_for_allocated.size = size + HEADER_SIZE;
             size_used += header_for_allocated.size;
@@ -84,8 +82,7 @@ impl Header {
                 header_for_padding.is_allocated = false;
                 header_for_padding.size = self.end_addr() - header_for_allocated.end_addr();
                 size_used += header_for_padding.size;
-
-                header_for_padding.next_header = self.next_header.take();
+                header_for_padding.next_header = header_for_allocated.next_header.take();
                 header_for_allocated.next_header = Some(header_for_padding);
             }
 
@@ -104,6 +101,7 @@ impl Drop for Header {
         panic!("Header should not be dropped!");
     }
 }
+
 impl fmt::Debug for Header {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(

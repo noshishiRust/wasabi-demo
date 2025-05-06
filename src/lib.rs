@@ -15,10 +15,10 @@ pub mod x86;
 pub mod test_runner;
 
 use allocator::ALLOCATOR;
-use efi::EfiHandle;
+use efi::memory::MemoryMapHolder;
 use efi::table::exit_from_efi_boot_services;
 use efi::table::EfiSystemTable;
-use efi::memory::MemoryMapHolder;
+use efi::EfiHandle;
 
 pub type Result<T> = core::result::Result<T, &'static str>;
 
@@ -34,11 +34,7 @@ pub fn init_basic_runtime(
     efi_system_table: &EfiSystemTable,
 ) -> MemoryMapHolder {
     let mut memory_map = MemoryMapHolder::new();
-    exit_from_efi_boot_services(
-        image_handle,
-        efi_system_table,
-        &mut memory_map,
-    );
+    exit_from_efi_boot_services(image_handle, efi_system_table, &mut memory_map);
     ALLOCATOR.init_with_mmap(&memory_map);
     memory_map
 }
