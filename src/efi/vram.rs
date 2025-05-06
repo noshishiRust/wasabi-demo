@@ -1,5 +1,6 @@
 use crate::efi::bitmap::BitMap;
-use crate::efi::{locate_graphic_protocol, EfiSystemTable};
+use crate::efi::protocol::locate_graphic_protocol;
+use crate::efi::table::EfiSystemTable;
 use crate::Result;
 use core::fmt;
 
@@ -169,7 +170,6 @@ fn draw_font_fg<T: BitMap>(buf: &mut T, x: i64, y: i64, color: u32, c: char) {
     }
 }
 
-#[allow(dead_code)]
 fn draw_str_fg<T: BitMap>(buf: &mut T, x: i64, y: i64, color: u32, s: &str) {
     for (i, c) in s.chars().enumerate() {
         draw_font_fg(buf, x + i as i64 * 8, y, color, c)
@@ -225,4 +225,41 @@ pub fn fill_rect<T: BitMap>(
         }
     }
     Ok(())
+}
+
+pub fn draw_test_pattern<T: BitMap>(buf: &mut T) {
+    let w = 128;
+    let left = buf.width() - w - 1;
+    let colors = [
+        Color::Black as u32,
+        Color::Red as u32,
+        Color::Green as u32,
+        Color::Blue as u32,
+    ];
+    let h = 64;
+    for (i, c) in colors.iter().enumerate() {
+        let y = i as i64 * h;
+        fill_rect(buf, *c, left, y, h, h).expect("fill_rect failed");
+        fill_rect(buf, !*c, left + h, y, h, h).expect("fill_rect failed");
+    }
+    let points = [(0, 0), (0, w), (w, 0), (w, w)];
+    for (x0, y0) in points.iter() {
+        for (x1, y1) in points.iter() {
+            let _ = draw_line(buf, Color::White as u32, left + *x0, *y0, left + *x1, *y1);
+        }
+    }
+    draw_str_fg(
+        buf,
+        left,
+        h * colors.len() as i64,
+        Color::Green as u32,
+        "0123456789",
+    );
+    draw_str_fg(
+        buf,
+        left,
+        h * colors.len() as i64 + 16,
+        Color::Green as u32,
+        "ABCDEF",
+    );
 }
