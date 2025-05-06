@@ -8,7 +8,7 @@ pub type EfiVoid = u8;
 pub type EfiHandle = u64;
 
 /// EFI System Table
-/// 
+///
 /// Reference: <https://uefi.org/specs/UEFI/2.11/04_EFI_System_Table.html#id6>
 #[repr(C)]
 pub struct EfiSystemTable {
@@ -18,7 +18,7 @@ pub struct EfiSystemTable {
 const _: () = assert!(offset_of!(EfiSystemTable, boot_services) == 96); // 12 * 8 (u64) = 96
 
 /// EFI Boot Services Table
-/// 
+///
 /// Reference: <https://uefi.org/specs/UEFI/2.11/04_EFI_System_Table.html#efi-boot-services-table>
 #[repr(C)]
 pub struct EfiBootServicesTable {
