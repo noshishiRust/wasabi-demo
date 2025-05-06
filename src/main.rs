@@ -4,7 +4,7 @@
 use core::fmt::Write;
 use wasabi_demo::efi::bitmap::BitMap;
 use wasabi_demo::efi::memory::{EfiMemoryType, MemoryMapHolder};
-use wasabi_demo::efi::table::EfiSystemTable;
+use wasabi_demo::efi::table::{exit_from_efi_boot_services, EfiSystemTable};
 use wasabi_demo::efi::vram::{draw_test_pattern, fill_rect, init_vram, Color, VramTextWriter};
 use wasabi_demo::efi::EfiHandle;
 use wasabi_demo::hlt;
@@ -13,7 +13,7 @@ use wasabi_demo::hlt;
 ///
 /// Reference: <https://uefi.org/specs/UEFI/2.11/04_EFI_System_Table.html#uefi-image-entry-point>
 #[no_mangle]
-fn efi_main(_image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
+fn efi_main(image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
     let mut vram = init_vram(efi_system_table).expect("Failed to initialize VRAM");
 
     let vw = vram.width();
@@ -46,6 +46,9 @@ fn efi_main(_image_handle: EfiHandle, efi_system_table: &EfiSystemTable) {
         "Total: {total_memory_pages} pages = {total_memory_size_mib} MiB"
     )
     .unwrap();
+
+    exit_from_efi_boot_services(image_handle, efi_system_table, &mut memory_map);
+    writeln!(w, "Hello, Non-UEFI world!").unwrap();
 
     loop {
         hlt();
